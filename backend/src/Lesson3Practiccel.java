@@ -16,5 +16,6 @@ public class Lesson3Practiccel {
         System.out.println("myShort: " + myShort);
         System.out.println("radius: " + radius);
         System.out.println("digit: " + digit);
+
     }
 }
