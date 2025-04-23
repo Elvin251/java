@@ -1,8 +1,8 @@
 public class VariablesPraktik {
     public static void main(String[] args) {
         String greeting = "Salam";
-        String name = " Elvindir";
-        String fullGreeting = greeting +"menim adim"  + name+".";
+        String name = " Elvin";
+        String fullGreeting = greeting +"menim adim"  + name+"dir.";
 
         System.out.println(fullGreeting);
         System.out.println("Uzunluq: " + fullGreeting.length());
@@ -10,10 +10,10 @@ public class VariablesPraktik {
         int index = myText.indexOf('!');
 
         System.out.println("! işarəsinin indeksi: " + index);
-        String myName = "Elvindir";
+        String myName = "Elvin";
         int myAge = 14;
         String myMajor = "Komputer Elmleridir";
 
-        System.out.println("Salam, menim adim " + myName + ", " + myAge + " yasim var. Menim ixtisasim " + myMajor + ".");
+        System.out.println("Salam, menim adim " + myName + ", " + myAge+"dir" + " yasim var. Menim ixtisasim " + myMajor + ".");
     }
 }
