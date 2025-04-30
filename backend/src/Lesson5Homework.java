@@ -59,7 +59,7 @@ public class Lesson5Homework {
 
         // 11
         String ad = "Aziz";
-        char ilkSimvol = ad.charAt(0);
+//        bunu bilmirem
         System.out.println(ilkSimvol);
 
         // 12
