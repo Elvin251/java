@@ -1,3 +1,4 @@
+import java.util.Scanner;
 public class Lesson6homework {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);

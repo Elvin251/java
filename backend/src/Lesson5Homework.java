@@ -58,9 +58,7 @@ public class Lesson5Homework {
 
 
         // 11
-        String ad = "Aziz";
-//        bunu bilmirem
-        System.out.println(ilkSimvol);
+
 
         // 12
         char verilen = 'D';

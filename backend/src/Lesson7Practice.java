@@ -1,3 +1,4 @@
+import java.util.Scanner;
 public class Lesson7Practice {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -24,7 +25,7 @@ public class Lesson7Practice {
             System.out.println("Great Job");
         }
 
-        // 3. 
+        // 3.
         double length = 5.0;
         double width = 3.0;
 
