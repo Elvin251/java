@@ -61,7 +61,7 @@ public class Lesson9HomeWork {
         System.out.println(original + " ədədinin tərsi: " + reversed);
         System.out.println();
 
-        // 7) 
+        // 7)
         int sum = 0;
         int input;
         do {
