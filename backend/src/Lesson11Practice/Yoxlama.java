@@ -29,6 +29,17 @@ public class Yoxlama {
             System.out.println(n1);
         }
 //        chatda ikinci olanlar
+        // 1-ci test
+        CartoonCharacter  character1 = new CartoonCharacter("Tom", "Tom and Jerry", 1940);
+        character1.myFavorite();
+        System.out.println(character1.toString());
 
+        System.out.println("--------------------------");
+        // 2-ci test:
+        Dog dog1 = new Dog("Max", 5);
+        dog1.bark();
+        System.out.println(dog1.toString());
+
+        System.out.println("--------------------------");
     }
 }
