@@ -10,7 +10,7 @@ public class Main {
         order.showOrder();
 
 
-        Bank userCard = new Bank("1234-5678-9012-3456", 20.0);  
+        Bank userCard = new Bank("1234-5678-9012-3456", 20.0);
 
         double totalAmount = order.calculateTotal();
         System.out.println("Ödəniləcək məbləğ: " + totalAmount + " AZN");
