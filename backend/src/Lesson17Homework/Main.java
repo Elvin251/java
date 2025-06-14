@@ -9,7 +9,7 @@ public class Main {
             Student st = new Student("Elvin", "Məmmədov", 80, 90, 70);
             System.out.println("5) Student Məlumatı:" + st);
 
-            System.out.println("6) Vergi: " + CalculateTax.calculateTax(4500));
+            System.out.println("6) Vergi: " +CalculateTax.calculateTax(4500));
         }
 
 }
