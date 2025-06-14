@@ -26,5 +26,6 @@ public class RentCar {
 
         System.out.println("Qalan məbləğ: " + remaining);
         System.out.println("Aylıq ödəniş: " + monthlyPayment);
+
     }
 }
