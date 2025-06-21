@@ -36,7 +36,6 @@ public class ClassAndObject {
     }
 }
 
-// Book sinifi
 class Book {
     int id;
     String name;
