@@ -1,6 +1,7 @@
 package Lesson22Practice;
 
 public class Tap3 {
+
     public static void main(String[] args) {
         int[] arr = {5, 8, 2, 19, 3};
         int min = arr[0], max = arr[0];
