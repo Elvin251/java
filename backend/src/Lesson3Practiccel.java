@@ -1,5 +1,6 @@
 public class Lesson3Practiccel {
     public static void main(String[] args) {
+
         boolean isThisNumber = true;
         float number = 100.887f;
         long myLong = 19212883212L;
