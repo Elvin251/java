@@ -7,7 +7,7 @@ public class Main {
         account.setBalance(500.0);
         System.out.println("Balance: " + account.getBalance());
 
-        account.setBalance(-200);  // bu keçərli deyil
+        account.setBalance(-200);  
     }
 
 }
