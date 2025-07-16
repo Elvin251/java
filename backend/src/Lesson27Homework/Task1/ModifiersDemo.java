@@ -1,4 +1,4 @@
-package Lesson27Practice.Task1;
+package Lesson27Homework.Task1;
 
 public class ModifiersDemo {
     public static void main(String[] args) {
