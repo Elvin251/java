@@ -1,8 +1,8 @@
 package Lesson34Practice.Task1;
 
-import Lesson34Practice.ElectricCar;
-import Lesson34Practice.Group;
-import Lesson34Practice.Square;
+import Lesson34Practice.Task1.ElectricCar;
+import Lesson34Practice.Task1.Group;
+import Lesson34Practice.Task1.Square;
 import Lesson34Practice.Task1.Food;
 
 public class Main {
