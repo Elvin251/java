@@ -7,6 +7,8 @@ public class Example18 {
         ArrayList<String> colors = new ArrayList<>();
         System.out.println("Is empty? " + colors.isEmpty());
 
+        System.out.println();
+
         colors.add("Red");
         System.out.println("Is empty after adding element? " + colors.isEmpty());
     }
