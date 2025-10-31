@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("az.developia.demo2.Lesson48Practice.Task2") 
+@ComponentScan("az.developia.demo2.Lesson48Practice.Task2")
 public class MainApp {
     public static void main(String[] args) {
 
