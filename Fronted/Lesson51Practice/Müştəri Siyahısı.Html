@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Müştəri Siyahısı</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    button { margin: 5px; padding: 10px 15px; border: none; background: #007bff; color: white; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #007bff; color: white; }
+    tr:hover { background-color: #f9f9f9; }
+    input { padding: 5px; margin-top: 10px; width: 100px; }
+  </style>
+</head>
+<body>
+
+  <h1>Müştəri Siyahısı</h1>
+  <div style="text-align:center;">
+    <button onclick="loadAll()">Bütün Müştərilər</button>
+    <button onclick="loadBalanceOver500()">Balansı 500+ olanlar</button>
+    <button onclick="loadStartsWithA()">Adı 'A' ilə başlayanlar</button>
+    <br><br>
+    <input type="number" id="customerId" placeholder="ID ilə bax">
+    <button onclick="loadById()">Göstər</button>
+  </div>
+
+  <table id="customerTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ad</th>
+        <th>Soyad</th>
+        <th>Email</th>
+        <th>Telefon</th>
+        <th>Balans (AZN)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_BASE = "http://localhost:8080/api/customers";
+
+    async function loadAll() {
+      const res = await fetch(API_BASE);
+      const data = await res.json();
+      showData(data);
+    }
+
+    async function loadBalanceOver500() {
+      const res = await fetch(`${API_BASE}/balance-over-500`);
+      const data = await res.json();
+      showData(data);
+    }
+
+    async function loadStartsWithA() {
+      const res = await fetch(`${API_BASE}/starts-with-a`);
+      const data = await res.json();
+      showData(data);
+    }
+
+    async function loadById() {
+      const id = document.getElementById("customerId").value;
+      if (!id) { alert("ID daxil et!"); return; }
+      const res = await fetch(`${API_BASE}/${id}`);
+      const data = await res.json();
+      showData(data ? [data] : []);
+    }
+
+    function showData(data) {
+      const tbody = document.querySelector("#customerTable tbody");
+      tbody.innerHTML = "";
+      if (data.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Məlumat tapılmadı</td></tr>";
+        return;
+      }
+      data.forEach(c => {
+        const row = `<tr>
+          <td>${c.id}</td>
+          <td>${c.name}</td>
+          <td>${c.surname}</td>
+          <td>${c.email}</td>
+          <td>${c.phone}</td>
+          <td>${c.balance}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    loadAll();
+  </script>
+
+</body>
+</html>
