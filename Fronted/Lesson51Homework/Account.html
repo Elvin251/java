@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Hesab Siyahısı</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    button { margin: 5px; padding: 10px 15px; border: none; background: #ff9800; color: white; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #e68900; }
+    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #ff9800; color: white; }
+    tr:hover { background-color: #f9f9f9; }
+    input { padding: 5px; margin-top: 10px; width: 140px; }
+  </style>
+</head>
+<body>
+
+  <h1> Hesab Siyahısı</h1>
+  <div style="text-align:center;">
+    <button onclick="loadAll()">Bütün Hesablar</button>
+    <button onclick="loadMaxBalance()">Ən Çox Balanslı</button>
+    <br><br>
+    <input type="text" id="cardNumber" placeholder="Kart Nömrəsi">
+    <input type="number" id="balance" placeholder="Balans">
+    <button onclick="searchByCardAndBalance()">Axtar</button>
+  </div>
+
+  <table id="accountTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Kart Nömrəsi</th>
+        <th>Balans</th>
+        <th>Ad</th>
+        <th>Soyad</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_BASE = "http://localhost:8080/api/accounts";
+
+    async function loadAll() {
+      const res = await fetch(API_BASE);
+      const data = await res.json();
+      showData(data);
+    }
+
+    async function loadMaxBalance() {
+      const res = await fetch(`${API_BASE}/max-balance`);
+      const data = await res.json();
+      showData([data]);
+    }
+
+    async function searchByCardAndBalance() {
+      const cardNumber = document.getElementById("cardNumber").value;
+      const balance = document.getElementById("balance").value;
+      if (!cardNumber || !balance) { alert("Kart nömrəsi və balans daxil edin!"); return; }
+      const res = await fetch(`${API_BASE}/search?cardNumber=${cardNumber}&balance=${balance}`);
+      const data = await res.json();
+      showData(data);
+    }
+
+    function showData(data) {
+      const tbody = document.querySelector("#accountTable tbody");
+      tbody.innerHTML = "";
+      if (!data || data.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Məlumat tapılmadı</td></tr>";
+        return;
+      }
+      data.forEach(a => {
+        tbody.innerHTML += `<tr>
+          <td>${a.id}</td>
+          <td>${a.cardNumber}</td>
+          <td>${a.balance}</td>
+          <td>${a.name}</td>
+          <td>${a.surname}</td>
+        </tr>`;
+      });
+    }
+
+    loadAll();
+  </script>
+
+</body>
+</html>

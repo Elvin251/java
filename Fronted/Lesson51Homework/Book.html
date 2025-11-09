@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Kitab Siyahısı</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    button { margin: 5px; padding: 10px 15px; border: none; background: #007bff; color: white; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #007bff; color: white; }
+    tr:hover { background-color: #f9f9f9; }
+    input { padding: 5px; margin-top: 10px; width: 120px; }
+  </style>
+</head>
+<body>
+
+  <h1> Kitab Siyahısı</h1>
+  <div style="text-align:center;">
+    <button onclick="loadAll()">Bütün Kitablar</button>
+    <button onclick="loadMostExpensive()">Ən Bahalı Kitab</button>
+    <br><br>
+    <input type="text" id="name" placeholder="Ad">
+    <input type="number" id="price" placeholder="Qiymət">
+    <button onclick="searchByNameAndPrice()">Axtar</button>
+  </div>
+
+  <table id="bookTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ad</th>
+        <th>Qiymət</th>
+        <th>Təsvir</th>
+        <th>Sayı</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_BASE = "http://localhost:8080/api/books";
+
+    async function loadAll() {
+      const res = await fetch(API_BASE);
+      const data = await res.json();
+      showData(data);
+    }
+
+    async function loadMostExpensive() {
+      const res = await fetch(`${API_BASE}/most-expensive`);
+      const data = await res.json();
+      showData([data]);
+    }
+
+    async function searchByNameAndPrice() {
+      const name = document.getElementById("name").value;
+      const price = document.getElementById("price").value;
+      if (!name || !price) { alert("Ad və qiymət daxil edin!"); return; }
+      const res = await fetch(`${API_BASE}/search?name=${name}&price=${price}`);
+      const data = await res.json();
+      showData(data);
+    }
+
+    function showData(data) {
+      const tbody = document.querySelector("#bookTable tbody");
+      tbody.innerHTML = "";
+      if (!data || data.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Məlumat tapılmadı</td></tr>";
+        return;
+      }
+      data.forEach(b => {
+        tbody.innerHTML += `<tr>
+          <td>${b.id}</td>
+          <td>${b.name}</td>
+          <td>${b.price}</td>
+          <td>${b.description}</td>
+          <td>${b.count}</td>
+        </tr>`;
+      });
+    }
+
+    loadAll();
+  </script>
+
+</body>
+</html>

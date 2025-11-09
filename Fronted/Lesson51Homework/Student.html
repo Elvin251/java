@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Tələbə Siyahısı</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    button { margin: 5px; padding: 10px 15px; border: none; background: #28a745; color: white; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #1e7e34; }
+    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #28a745; color: white; }
+    tr:hover { background-color: #f9f9f9; }
+    input { padding: 5px; margin-top: 10px; width: 120px; }
+  </style>
+</head>
+<body>
+
+  <h1> Tələbə Siyahısı</h1>
+  <div style="text-align:center;">
+    <button onclick="loadAll()">Bütün Tələbələr</button>
+    <button onclick="loadLowestGrade()">Ən Aşağı Qiymətli</button>
+    <br><br>
+    <input type="text" id="name" placeholder="Ad">
+    <input type="number" id="age" placeholder="Yaş">
+    <button onclick="searchByNameAndAge()">Axtar</button>
+  </div>
+
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ad</th>
+        <th>Yaş</th>
+        <th>Qiymət</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_BASE = "http://localhost:8080/api/students";
+
+    async function loadAll() {
+      const res = await fetch(API_BASE);
+      const data = await res.json();
+      showData(data);
+    }
+
+    async function loadLowestGrade() {
+      const res = await fetch(`${API_BASE}/lowest-grade`);
+      const data = await res.json();
+      showData([data]);
+    }
+
+    async function searchByNameAndAge() {
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      if (!name || !age) { alert("Ad və yaş daxil edin!"); return; }
+      const res = await fetch(`${API_BASE}/search?name=${name}&age=${age}`);
+      const data = await res.json();
+      showData(data);
+    }
+
+    function showData(data) {
+      const tbody = document.querySelector("#studentTable tbody");
+      tbody.innerHTML = "";
+      if (!data || data.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Məlumat tapılmadı</td></tr>";
+        return;
+      }
+      data.forEach(s => {
+        tbody.innerHTML += `<tr>
+          <td>${s.id}</td>
+          <td>${s.name}</td>
+          <td>${s.age}</td>
+          <td>${s.grade}</td>
+        </tr>`;
+      });
+    }
+
+    loadAll();
+  </script>
+
+</body>
+</html>
