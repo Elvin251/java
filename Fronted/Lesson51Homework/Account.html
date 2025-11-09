@@ -4,86 +4,76 @@
   <meta charset="UTF-8">
   <title>Hesab Siyahısı</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
-    h1 { text-align: center; color: #333; }
-    button { margin: 5px; padding: 10px 15px; border: none; background: #ff9800; color: white; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #e68900; }
-    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-    th { background: #ff9800; color: white; }
-    tr:hover { background-color: #f9f9f9; }
-    input { padding: 5px; margin-top: 10px; width: 140px; }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #ffd966, #f1c232);
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    h1 { text-align: center; }
+    .controls { text-align: center; margin-bottom: 25px; }
+    input { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; }
+    button {
+      background: #f1c232; color: white; border: none;
+      border-radius: 6px; padding: 10px 16px; margin: 6px;
+      cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    button:hover { background: #d5a925; }
+    .card-container {
+      display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+    }
+    .card {
+      background: #fffaf1; border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      padding: 20px; width: 270px;
+    }
+    .title { font-weight: bold; font-size: 20px; }
+    .info { margin: 4px 0; }
+    .no-data { text-align: center; color: #888; margin-top: 30px; }
   </style>
 </head>
 <body>
-
-  <h1> Hesab Siyahısı</h1>
-  <div style="text-align:center;">
-    <button onclick="loadAll()">Bütün Hesablar</button>
-    <button onclick="loadMaxBalance()">Ən Çox Balanslı</button>
-    <br><br>
-    <input type="text" id="cardNumber" placeholder="Kart Nömrəsi">
-    <input type="number" id="balance" placeholder="Balans">
-    <button onclick="searchByCardAndBalance()">Axtar</button>
+  <div class="container">
+    <h1> Hesab Siyahısı</h1>
+    <div class="controls">
+      <button onclick="loadAll()">Bütün Hesablar</button>
+      <button onclick="loadRichest()">Ən Çox Balanslı</button><br><br>
+      <input type="text" id="cardNumber" placeholder="Kart nömrəsi">
+      <input type="number" id="balance" placeholder="Balans">
+      <button onclick="searchByCardAndBalance()">Axtar</button>
+    </div>
+    <div class="card-container" id="container"></div>
   </div>
 
-  <table id="accountTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Kart Nömrəsi</th>
-        <th>Balans</th>
-        <th>Ad</th>
-        <th>Soyad</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
   <script>
-    const API_BASE = "http://localhost:8080/api/accounts";
-
-    async function loadAll() {
-      const res = await fetch(API_BASE);
-      const data = await res.json();
-      showData(data);
+    const API = "http://localhost:8080/api/accounts";
+    async function loadAll(){const d=await (await fetch(API)).json();show(d);}
+    async function loadRichest(){const d=await (await fetch(`${API}/richest`)).json();show([d]);}
+    async function searchByCardAndBalance(){
+      const c=document.getElementById("cardNumber").value,b=document.getElementById("balance").value;
+      if(!c||!b){alert("Kart və balans daxil edin!");return;}
+      const d=await (await fetch(`${API}/search?cardNumber=${c}&balance=${b}`)).json();show(d);
     }
-
-    async function loadMaxBalance() {
-      const res = await fetch(`${API_BASE}/max-balance`);
-      const data = await res.json();
-      showData([data]);
+    function show(data){
+      const c=document.getElementById("container");c.innerHTML="";
+      if(!data||data.length===0){c.innerHTML="<div class='no-data'>Məlumat tapılmadı ❌</div>";return;}
+      data.forEach(a=>c.innerHTML+=`
+        <div class="card">
+          <div class="title">${a.name} ${a.surname}</div>
+          <div class="info"><b>Kart:</b> ${a.cardNumber}</div>
+          <div class="info"><b>Balans:</b> ${a.balance} AZN</div>
+        </div>`);
     }
-
-    async function searchByCardAndBalance() {
-      const cardNumber = document.getElementById("cardNumber").value;
-      const balance = document.getElementById("balance").value;
-      if (!cardNumber || !balance) { alert("Kart nömrəsi və balans daxil edin!"); return; }
-      const res = await fetch(`${API_BASE}/search?cardNumber=${cardNumber}&balance=${balance}`);
-      const data = await res.json();
-      showData(data);
-    }
-
-    function showData(data) {
-      const tbody = document.querySelector("#accountTable tbody");
-      tbody.innerHTML = "";
-      if (!data || data.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Məlumat tapılmadı</td></tr>";
-        return;
-      }
-      data.forEach(a => {
-        tbody.innerHTML += `<tr>
-          <td>${a.id}</td>
-          <td>${a.cardNumber}</td>
-          <td>${a.balance}</td>
-          <td>${a.name}</td>
-          <td>${a.surname}</td>
-        </tr>`;
-      });
-    }
-
     loadAll();
   </script>
-
 </body>
 </html>

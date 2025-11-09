@@ -4,41 +4,125 @@
   <meta charset="UTF-8">
   <title>Kitab Siyahısı</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
-    h1 { text-align: center; color: #333; }
-    button { margin: 5px; padding: 10px 15px; border: none; background: #007bff; color: white; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #0056b3; }
-    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-    th { background: #007bff; color: white; }
-    tr:hover { background-color: #f9f9f9; }
-    input { padding: 5px; margin-top: 10px; width: 120px; }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2b2b2b;
+      font-size: 32px;
+    }
+
+    .controls {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-right: 8px;
+      width: 150px;
+      transition: border 0.3s;
+    }
+
+    input:focus {
+      border-color: #5563DE;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #5563DE;
+      color: white;
+      cursor: pointer;
+      margin: 6px;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      background: #3d4ecb;
+      transform: translateY(-2px);
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .book-card {
+      background: #f9f9ff;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      width: 270px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .book-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2b2b2b;
+      margin-bottom: 10px;
+    }
+
+    .book-info {
+      margin: 4px 0;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+      margin-top: 30px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1> Kitab Siyahısı</h1>
 
-  <h1> Kitab Siyahısı</h1>
-  <div style="text-align:center;">
-    <button onclick="loadAll()">Bütün Kitablar</button>
-    <button onclick="loadMostExpensive()">Ən Bahalı Kitab</button>
-    <br><br>
-    <input type="text" id="name" placeholder="Ad">
-    <input type="number" id="price" placeholder="Qiymət">
-    <button onclick="searchByNameAndPrice()">Axtar</button>
+    <div class="controls">
+      <button onclick="loadAll()">Bütün Kitablar</button>
+      <button onclick="loadMostExpensive()">Ən Bahalı Kitab</button><br><br>
+      <input type="text" id="name" placeholder="Ad">
+      <input type="number" id="price" placeholder="Qiymət">
+      <button onclick="searchByNameAndPrice()">Axtar</button>
+    </div>
+
+    <div class="card-container" id="bookContainer"></div>
   </div>
-
-  <table id="bookTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Ad</th>
-        <th>Qiymət</th>
-        <th>Təsvir</th>
-        <th>Sayı</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 
   <script>
     const API_BASE = "http://localhost:8080/api/books";
@@ -65,25 +149,27 @@
     }
 
     function showData(data) {
-      const tbody = document.querySelector("#bookTable tbody");
-      tbody.innerHTML = "";
+      const container = document.getElementById("bookContainer");
+      container.innerHTML = "";
+
       if (!data || data.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Məlumat tapılmadı</td></tr>";
+        container.innerHTML = `<div class='no-data'>Məlumat tapılmadı ❌</div>`;
         return;
       }
+
       data.forEach(b => {
-        tbody.innerHTML += `<tr>
-          <td>${b.id}</td>
-          <td>${b.name}</td>
-          <td>${b.price}</td>
-          <td>${b.description}</td>
-          <td>${b.count}</td>
-        </tr>`;
+        container.innerHTML += `
+          <div class="book-card">
+            <div class="book-title">${b.name}</div>
+            <div class="book-info"><b>Qiymət:</b> ${b.price} AZN</div>
+            <div class="book-info"><b>Təsvir:</b> ${b.description}</div>
+            <div class="book-info"><b>Sayı:</b> ${b.count}</div>
+          </div>
+        `;
       });
     }
 
     loadAll();
   </script>
-
 </body>
 </html>
