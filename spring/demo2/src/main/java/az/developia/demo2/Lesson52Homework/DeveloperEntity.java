@@ -32,8 +32,6 @@ public class DeveloperEntity {
 
     public String getSurname() { return surname; }
     public void setSurname(String surname) { this.surname = surname; }
-
-
     public String getJob() { return job; }
     public void setJob(String job) { this.job = job; }
 

@@ -46,14 +46,23 @@
     <h1>Developerlər</h1>
     <div class="controls">
       <button onclick="loadAll()">Bütün Developerlər</button>
+
       <button onclick="maxSalary()">Ən Çox Maaş Alan</button>
+
       <button onclick="maxExperience()">Ən Təcrübəli</button><br><br>
+
       <input type="text" id="newName" placeholder="Ad">
+
       <input type="text" id="newSurname" placeholder="Soyad">
+
       <input type="text" id="newJob" placeholder="Vəzifə">
+
       <input type="number" id="newSalary" placeholder="Maaş">
+
       <input type="number" id="newExp" placeholder="Təcrübə ili">
+
       <button onclick="addDev()">Əlavə Et</button>
+      
     </div>
     <div class="card-container" id="container"></div>
   </div>
@@ -90,7 +99,7 @@
         headers: {"Content-Type":"application/json"},
 
         body: JSON.stringify(dev)
-        
+
       })).json();
       show([d]);
     }

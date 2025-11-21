@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <title>Musiqi İdarəetmə Sistemi</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #e7e7e7;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #00eaff;
+        }
+        .box {
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 10px #00eaff44;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 8px;
+            background: #2b2b2b;
+            color: #fff;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00eaff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00bcd4;
+        }
+        .card {
+            background: #1f1f1f;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 0 0 7px #00eaff55;
+        }
+    </style>
+
+</head>
+<body>
+
+<h2>Musiqi İdarəetmə Paneli</h2>
+
+<div class="box">
+    <h3> Yeni Musiqi Yarat</h3>
+
+    <input id="ame" placeholder="Musiqi adı">
+    <input id="artist" placeholder="İfaçı">
+    <input id="duration" placeholder="Müddət (saniyə)">
+    <input id="type" placeholder="Janr">
+
+    <button onclick="createMusic()">Yarat</button>
+</div>
+
+<div class="box">
+    <h3> Bütün Musiqilər</h3>
+    <button onclick="loadAll()">Yüklə</button>
+    <div id="all"></div>
+</div>
+
+<div class="box">
+    <h3> ID ilə Musiqi Tap</h3>
+    <input id="findId" placeholder="ID daxil edin">
+    <button onclick="findById()">Tap</button>
+    <div id="findResult"></div>
+</div>
+
+<div class="box">
+    <h3> Musiqini Redaktə Et</h3>
+    <input id="uid" placeholder="Yenilənəcək ID">
+    <input id="uname" placeholder="Yeni ad">
+    <input id="uartist" placeholder="Yeni ifaçı">
+    <input id="uduration" placeholder="Yeni müddət">
+    <input id="utype" placeholder="Yeni janr">
+
+    <button onclick="updateMusic()">Yenilə</button>
+</div>
+
+<div class="box">
+    <h3> Musiqini Sil</h3>
+    <input id="did" placeholder="Silinəcək ID">
+    <button onclick="deleteMusic()">Sil</button>
+</div>
+
+<script>
+function createMusic() {
+    const music = {
+        name: ame.value,
+        artist: artist.value,
+        duration: Number(duration.value),
+        musicType: type.value
+    };
+
+    fetch("http://localhost:8080/api/musics", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(music)
+    })
+    .then(r => r.json())
+    .then(d => alert("Yaradıldı! ID = " + d.id));
+}
+
+function loadAll() {
+    fetch("http://localhost:8080/api/musics")
+        .then(r => r.json())
+        .then(list => {
+            let html = "";
+            list.forEach(m => {
+                html += `
+                <div class="card">
+                    <b>${m.name}</b> — ${m.artist}<br>
+                    ${m.duration} saniyə<br>
+                    Janr: ${m.musicType}<br>
+                    <small>ID: ${m.id}</small>
+                </div>`;
+            });
+            all.innerHTML = html;
+        });
+}
+
+function findById() {
+    fetch("http://localhost:8080/api/musics/" + findId.value)
+        .then(r => r.json())
+        .then(m => {
+            if (!m) {
+                findResult.innerHTML = "<div class='card'>Tapılmadı!</div>";
+                return;
+            }
+            findResult.innerHTML = `
+            <div class="card">
+                <b>${m.name}</b><br>
+                ${m.artist}<br>
+                ${m.duration} saniyə<br>
+                Janr: ${m.musicType}<br>
+                ID: ${m.id}
+            </div>`;
+        });
+}
+
+function updateMusic() {
+    const updated = {
+        name: uname.value,
+        artist: uartist.value,
+        duration: Number(uduration.value),
+        musicType: utype.value
+    };
+
+    fetch("http://localhost:8080/api/musics/" + uid.value, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(updated)
+    })
+    .then(r => r.json())
+    .then(() => alert("Uğurla yeniləndi!"));
+}
+
+function deleteMusic() {
+    fetch("http://localhost:8080/api/musics/" + did.value, {
+        method: "DELETE"
+    })
+    .then(() => alert("Silindi!"));
+}
+</script>
+
+</body>
+</html>
