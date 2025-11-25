@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone Store</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .form-box, .list-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 45%;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .phone-card {
+            display: flex;
+            gap: 15px;
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            align-items: center;
+            box-shadow: 0 2px 5px #bbb;
+        }
+
+        .phone-card img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .buttons button {
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1> Phone Store</h1>
+
+<div class="container">
+    <div class="form-box">
+        <h2>Yeni Telefon Əlavə Et</h2>
+
+        <input type="text" id="brand" placeholder="Brand">
+        <input type="text" id="model" placeholder="Model">
+        <input type="number" id="price" placeholder="Price">
+        <input type="text" id="color" placeholder="Color">
+        <input type="number" id="ram" placeholder="RAM (GB)">
+        <input type="number" id="memory" placeholder="Memory (GB)">
+        
+        <button onclick="createPhone()">Əlavə Et</button>
+    </div>
+
+
+    <div class="list-box">
+        <h2>Bütün Telefonlar</h2>
+        <div id="phoneList"></div>
+    </div>
+
+</div>
+
+
+<script>
+    const API = "http://localhost:8080/api/phones";
+
+    async function loadPhones() {
+        const res = await fetch(API);
+        const phones = await res.json();
+
+        const list = document.getElementById("phoneList");
+        list.innerHTML = "";
+
+        phones.forEach(p => {
+            list.innerHTML += `
+                <div class="phone-card">
+                    <img src="${p.pictureUrl ? 'http://localhost:8080' + p.pictureUrl : 'https://via.placeholder.com/120'}">
+
+                    <div>
+                        <h3>${p.brand} ${p.model}</h3>
+                        <p><b>Price:</b> ${p.price}</p>
+                        <p><b>Color:</b> ${p.color}</p>
+                        <p><b>RAM:</b> ${p.ram} GB</p>
+                        <p><b>Memory:</b> ${p.memory} GB</p>
+
+                        <!-- upload form -->
+                        <input type="file" id="file-${p.id}" onchange="uploadImage(${p.id})">
+                    </div>
+
+                    <div class="buttons">
+                        <button onclick="editPhone(${p.id})">Redaktə</button>
+                        <button onclick="deletePhone(${p.id})" style="background:#ff6666;color:white">Sil</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    async function createPhone() {
+        const phone = {
+            brand: brand.value,
+            model: model.value,
+            price: price.value,
+            color: color.value,
+            ram: ram.value,
+            memory: memory.value
+        };
+
+        await fetch(API, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(phone)
+        });
+
+        loadPhones();
+        alert("Telefon əlavə edildi!");
+    }
+    async function editPhone(id) {
+        const brandValue = prompt("Brand daxil edin:");
+        const modelValue = prompt("Model daxil edin:");
+        const priceValue = prompt("Qiymət daxil edin:");
+        const colorValue = prompt("Rəng daxil edin:");
+        const ramValue = prompt("RAM daxil edin:");
+        const memoryValue = prompt("Memory daxil edin:");
+
+        const updated = {
+            brand: brandValue,
+            model: modelValue,
+            price: priceValue,
+            color: colorValue,
+            ram: ramValue,
+            memory: memoryValue
+        };
+
+        await fetch(`${API}/${id}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(updated)
+        });
+
+        loadPhones();
+    }
+
+    async function deletePhone(id) {
+        if (!confirm("Silmək istəyirsən?")) return;
+
+        await fetch(`${API}/${id}`, { method: "DELETE" });
+        loadPhones();
+    }
+
+    async function uploadImage(id) {
+        const fileInput = document.getElementById("file-" + id);
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        await fetch(`${API}/${id}/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        loadPhones();
+    }
+
+    loadPhones();
+</script>
+
+</body>
+</html>
