@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Car Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4A90E2;
+            border: none;
+            color: white;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #357ABD;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .result {
+            margin-top: 10px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Bütün maşınları gətir</h2>
+    <button onclick="getAllCars()">Get All</button>
+    <ul id="carList"></ul>
+</div>
+
+<div class="card">
+    <h2>ID ilə tap</h2>
+    <input id="carIdInput" placeholder="ID daxil edin" />
+    <button onclick="findCarById()">Find</button>
+    <p id="findResult" class="result"></p>
+</div>
+
+<div class="card">
+    <h2>Yeni maşın əlavə et</h2>
+    <input id="brand" placeholder="Brand" />
+    <input id="model" placeholder="Model" />
+    <input id="price" placeholder="Price" />
+    <button onclick="addCar()">Add</button>
+    <p id="addResult" class="result"></p>
+</div>
+
+<script>
+    const baseUrl = "http://localhost:8080/api/cars";
+
+    function getAllCars() {
+        fetch(baseUrl + "/getAll")
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById("carList");
+                list.innerHTML = "";
+                data.forEach(car => {
+                    const li = document.createElement("li");
+                    li.textContent = car.id + " - " + car.brand + " " + car.model;
+                    list.appendChild(li);
+                });
+            });
+    }
+
+    function findCarById() {
+        const id = document.getElementById("carIdInput").value;
+        fetch(baseUrl + "/findById/" + id)
+            .then(res => res.json())
+            .then(car => {
+                document.getElementById("findResult").textContent =
+                    car.id + " - " + car.brand + " " + car.model + " ($" + car.price + ")";
+            });
+    }
+
+    function addCar() {
+        const newCar = {
+            brand: document.getElementById("brand").value,
+            model: document.getElementById("model").value,
+            price: document.getElementById("price").value
+        };
+
+        fetch(baseUrl + "/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newCar)
+        })
+            .then(res => res.json())
+            .then(car => {
+                document.getElementById("addResult").textContent =
+                    "Əlavə olundu: " + car.id + " - " + car.brand + " " + car.model;
+            });
+    }
+</script>
+
+</body>
+</html>
