@@ -1,5 +1,11 @@
 package az.developia.demo2.Lesson60;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
@@ -10,6 +16,11 @@ public class EmployeeController {
     @GetMapping
     public List<EmployeeEntity> getAll() {
         return employeeService.getAll();
+    }
+
+    @PostMapping
+    public void add(@RequestBody EmployeeEntity employee) {
+        employeeService.save(employee);
     }
 
     @GetMapping("/salary-range")
@@ -38,7 +49,7 @@ public class EmployeeController {
     public List<EmployeeEntity> getByBirthdayRange(
             @RequestParam String begin,
             @RequestParam String end) {
-        return employeeService.getByBirthdayRange(
+        return employeeService.getBirthdayRange(
                 LocalDate.parse(begin),
                 LocalDate.parse(end)
         );
@@ -52,10 +63,5 @@ public class EmployeeController {
     @GetMapping("/phone-055")
     public List<EmployeeEntity> getPhonesStarting055() {
         return employeeService.getPhonesStarting055();
-    }
-
-    @PostMapping
-    public void add(@RequestBody EmployeeEntity employee) {
-        employeeService.save(employee);
     }
 }

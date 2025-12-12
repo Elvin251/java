@@ -1,5 +1,12 @@
 package az.developia.demo2.Lesson60;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "employees")
 @Data
@@ -20,4 +27,3 @@ public class EmployeeEntity {
     private LocalDate birthday;
     private Integer experienceYear;
 }
-
