@@ -7,54 +7,38 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
 
-    public void save(ProductRequestDto dto) {
-        CustomerEntity customer =
-                customerRepository.findById(dto.getCustomerId()).orElseThrow();
-        productRepository.save(ProductMapper.toEntity(dto, customer));
+    public ProductResponseDTO save(ProductRequestDTO dto) {
+        CustomerEntity customer = customerRepository.findById(dto.getCustomerId()).orElseThrow();
+        ProductEntity product = ProductMapper.toEntity(dto, customer);
+        return ProductMapper.toResponse(productRepository.save(product));
     }
 
-    public List<ProductResponseDto> findAll() {
+    public List<ProductResponseDTO> getAll() {
         return productRepository.findAll()
-                .stream()
-                .map(ProductMapper::toDto)
-                .toList();
+                .stream().map(ProductMapper::toResponse).toList();
     }
 
-    public ProductResponseDto findById(Long id) {
-        return ProductMapper.toDto(
-                productRepository.findById(id).orElseThrow());
-    }
-
-    public void update(Long id, ProductRequestDto dto) {
-        ProductEntity product = productRepository.findById(id).orElseThrow();
-        product.setName(dto.getName());
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        productRepository.save(product);
+    public ProductResponseDTO findById(Long id) {
+        return productRepository.findById(id)
+                .map(ProductMapper::toResponse).orElseThrow();
     }
 
     public void delete(Long id) {
         productRepository.deleteById(id);
     }
 
-    public List<ProductResponseDto> findByCustomer(Long customerId) {
+    public List<ProductResponseDTO> findByCustomer(Long customerId) {
         return productRepository.findByCustomerId(customerId)
-                .stream()
-                .map(ProductMapper::toDto)
-                .toList();
+                .stream().map(ProductMapper::toResponse).toList();
     }
 
-    public List<ProductResponseDto> sortAZ() {
+    public List<ProductResponseDTO> sortAZ() {
         return productRepository.findAllByOrderByNameAsc()
-                .stream()
-                .map(ProductMapper::toDto)
-                .toList();
+                .stream().map(ProductMapper::toResponse).toList();
     }
 
-    public List<ProductResponseDto> findByPriceRange(Double min, Double max) {
+    public List<ProductResponseDTO> findByPriceRange(Double min, Double max) {
         return productRepository.findByPriceBetween(min, max)
-                .stream()
-                .map(ProductMapper::toDto)
-                .toList();
+                .stream().map(ProductMapper::toResponse).toList();
     }
 }

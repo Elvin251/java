@@ -6,12 +6,14 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public void save(CustomerRequestDto dto) {
-        customerRepository.save(CustomerMapper.toEntity(dto));
+    public CustomerResponseDTO save(CustomerRequestDTO dto) {
+        CustomerEntity entity = CustomerMapper.toEntity(dto);
+        return CustomerMapper.toResponse(customerRepository.save(entity));
     }
 
-    public CustomerResponseDto findById(Long id) {
-        return CustomerMapper.toDto(
-                customerRepository.findById(id).orElseThrow());
+    public CustomerResponseDTO findById(Long id) {
+        return customerRepository.findById(id)
+                .map(CustomerMapper::toResponse)
+                .orElseThrow();
     }
 }

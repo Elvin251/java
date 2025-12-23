@@ -1,10 +1,9 @@
 package az.developia.demo2.Lesson63;
 
 @Data
-public class ProductResponseDto {
+public class ProductResponseDTO {
     private Long id;
     private String name;
-    private String description;
     private Double price;
-    private String customerName;
+    private String customerFullName;
 }

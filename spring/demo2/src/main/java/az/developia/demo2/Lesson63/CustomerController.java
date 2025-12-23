@@ -8,12 +8,12 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public void save(@RequestBody CustomerRequestDto dto) {
-        customerService.save(dto);
+    public CustomerResponseDTO save(@RequestBody CustomerRequestDTO dto) {
+        return customerService.save(dto);
     }
 
     @GetMapping("/{id}")
-    public CustomerResponseDto getById(@PathVariable Long id) {
+    public CustomerResponseDTO findById(@PathVariable Long id) {
         return customerService.findById(id);
     }
 }

@@ -1,5 +1,6 @@
 package az.developia.demo2.Lesson63;
 
+@Entity
 @Table(name = "customers")
 @Data
 @NoArgsConstructor
@@ -15,4 +16,7 @@ public class CustomerEntity {
     private String email;
     private String phone;
     private LocalDate birthday;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<ProductEntity> products;
 }
