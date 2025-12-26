@@ -1,4 +1,4 @@
-package az.developia.demo2.Lesson50Practice;
+package az.developia.demo2.Lesson50Homework.Lesson50Practice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
