@@ -1,10 +1,8 @@
-package az.developia.demo2.Lesson63;
+package az.developia.demo2.Lesson64;
 
 @Entity
 @Table(name = "products")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductEntity {
 
     @Id
@@ -12,9 +10,8 @@ public class ProductEntity {
     private Long id;
 
     private String name;
-    private String description;
     private Double price;
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderEntity> orders;
 }
