@@ -1,32 +1,35 @@
-package az.developia.turbo_system_name.Project.controller;
+package az.developia.turbo_system_name.Project.Controller;
 
+
+
+
+
+import az.developia.turbo_system_name.Project.request.LoginRequest;
+import az.developia.turbo_system_name.Project.request.RegisterRequest;
+import az.developia.turbo_system_name.Project.response.ApiResponse;
+import az.developia.turbo_system_name.Project.response.AuthResponse;
+import az.developia.turbo_system_name.Project.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import az.developia.turbo_system_name.Project.requestresponse.*;
-import az.developia.turbo_system_name.Project.requestresponse.MessageResponse;
-import az.developia.turbo_system_name.Project.service.AuthService;
-
 @RestController
-@RequestMapping("/auth")
-@CrossOrigin
+@RequestMapping("/api/auth")
+@CrossOrigin("*")
 public class AuthController {
 
     private final AuthService service;
 
-    public AuthController(AuthService service){
-        this.service=service;
+    public AuthController(AuthService service) {
+        this.service = service;
     }
 
     @PostMapping("/register")
-    public MessageResponse register(@RequestBody RegisterRequest req){
-        service.register(req);
-        return new MessageResponse("Registered Successfully!");
+    public ApiResponse<AuthResponse> register(@Valid @RequestBody RegisterRequest req) {
+        return ApiResponse.ok("Qeydiyyat ugurludur", service.register(req));
     }
 
     @PostMapping("/login")
-    public MessageResponse login(@RequestBody LoginRequest req){
-        boolean ok=service.login(req);
-        if(ok) return new MessageResponse("Login Success!");
-        return new MessageResponse("Login Failed!");
+    public ApiResponse<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
+        return ApiResponse.ok("Login ugurludur", service.login(req));
     }
 }

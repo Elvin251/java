@@ -1,29 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>TURBO.AZ</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8"/>
+  <title>Turbo.az • Elanlar</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
+<body data-page="index">
+  <div class="container">
+    <div class="nav">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <b>Turbo.az</b>
+          <div class="sub">Avtomobil Elan Sistemi</div>
+        </div>
+      </div>
+      <div class="nav-links" id="navLinks"></div>
+    </div>
 
-<body onload="loadAds()">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Aktiv elanlar</h1>
+          <p>Brand/Model/Qiymət/İl/Şəhər/Yanacaq üzrə axtarış + pagination + detail. (BrandId/ModelId admin paneldən götür)</p>
+        </div>
+        <div class="kpi">
+          <span class="badge">🔎 Search</span>
+          <span class="badge">📄 Pagination</span>
+          <span class="badge">✨ Detail</span>
+        </div>
+      </div>
+    </div>
 
-<header class="header">
-  <div class="logo">TURBO.AZ</div>
+    <div class="card" style="margin-top:14px">
+      <h2>Axtarış</h2>
+      <div class="grid" style="grid-template-columns:repeat(4,1fr); margin-top:12px">
+        <div><label>BrandId</label><input id="fBrandId" type="number" placeholder="məs: 1"/></div>
+        <div><label>ModelId</label><input id="fModelId" type="number" placeholder="məs: 2"/></div>
+        <div><label>Şəhər</label><input id="fCity" placeholder="Bakı"/></div>
+        <div><label>Yanacaq</label><input id="fFuel" placeholder="GASOLINE"/></div>
+        <div><label>Qiymət min</label><input id="fPriceMin" type="number" placeholder="5000"/></div>
+        <div><label>Qiymət max</label><input id="fPriceMax" type="number" placeholder="25000"/></div>
+        <div><label>İl min</label><input id="fYearMin" type="number" placeholder="2008"/></div>
+        <div><label>İl max</label><input id="fYearMax" type="number" placeholder="2022"/></div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn ok" id="filterBtn">Axtar</button>
+      </div>
+    </div>
 
-  <div class="menu">
-    <a href="login.html">Login</a>
-    <a href="register.html">Register</a>
-    <a href="add-ad.html" class="btn">+ Yeni elan</a>
-    <a href="favorite.html">❤️ Seçilmişlər</a>
+    <div id="adsGrid" class="grid cards" style="margin-top:14px"></div>
+    <div id="pager" class="card" style="margin-top:14px"></div>
   </div>
-</header>
 
-<div class="container">
-  <h2 class="title">Bütün Elanlar</h2>
-  <div id="adsContainer" class="grid"></div>
-</div>
+  <div class="modal-backdrop" id="modalBack">
+    <div class="modal"><div id="modalBody"></div></div>
+  </div>
 
-<script src="app.js"></script>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,37 +1,39 @@
-package az.developia.turbo_system_name.Project.controller;
+package az.developia.turbo_system_name.Project.Controller;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.*;
+
 
 import az.developia.turbo_system_name.Project.entity.FavoriteEntity;
-import az.developia.turbo_system_name.Project.requestresponse.MessageResponse;
+import az.developia.turbo_system_name.Project.response.ApiResponse;
 import az.developia.turbo_system_name.Project.service.FavoriteService;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/favorites")
-@CrossOrigin
+@RequestMapping("/api/favorites")
+@CrossOrigin("*")
 public class FavoriteController {
 
     private final FavoriteService service;
 
-    public FavoriteController(FavoriteService service){
-        this.service=service;
+    public FavoriteController(FavoriteService service) {
+        this.service = service;
     }
 
-    @PostMapping("/{userId}/{adId}")
-    public MessageResponse add(@PathVariable Long userId,@PathVariable Long adId){
-        service.addFavorite(userId,adId);
-        return new MessageResponse("Added to Favorites!");
+    @PostMapping("/{adId}")
+    public ApiResponse<FavoriteEntity> add(Authentication auth, @PathVariable Long adId) {
+        return ApiResponse.ok("Seçilmişə əlavə olundu", service.add(auth.getName(), adId));
     }
 
-    @GetMapping("/{userId}")
-    public List<FavoriteEntity> list(@PathVariable Long userId){
-        return service.myFavorites(userId);
+    @DeleteMapping("/{adId}")
+    public ApiResponse<String> remove(Authentication auth, @PathVariable Long adId) {
+        service.remove(auth.getName(), adId);
+        return ApiResponse.ok("Seçilmişdən silindi", "OK");
     }
 
-    @DeleteMapping("/{id}")
-    public MessageResponse delete(@PathVariable Long id){
-        service.deleteFavorite(id);
-        return new MessageResponse("Favorite Deleted!");
+    @GetMapping
+    public ApiResponse<List<FavoriteEntity>> list(Authentication auth) {
+        return ApiResponse.ok("Seçilmişlər", service.list(auth.getName()));
     }
 }

@@ -1,40 +1,53 @@
 package az.developia.turbo_system_name.Project.service;
 
-import java.util.List;
+import az.developia.turbo_system_name.Project.entity.*;
+import az.developia.turbo_system_name.Project.exception.BadRequestException;
+import az.developia.turbo_system_name.Project.exception.ResourceNotFoundException;
+import az.developia.turbo_system_name.Project.repository.FavoriteRepository;
 import org.springframework.stereotype.Service;
 
-import az.developia.turbo_system_name.Project.entity.*;
-import az.developia.turbo_system_name.Project.repository.*;
+import java.util.List;
 
 @Service
 public class FavoriteService {
 
-    private final FavoriteRepository favRepo;
-    private final UserRepository userRepo;
-    private final AdRepository adRepo;
+    private final FavoriteRepository repo;
+    private final UserService userService;
+    private final AdvertisementService adService;
 
-    public FavoriteService(FavoriteRepository favRepo,UserRepository userRepo,AdRepository adRepo){
-        this.favRepo=favRepo;
-        this.userRepo=userRepo;
-        this.adRepo=adRepo;
+    public FavoriteService(FavoriteRepository repo, UserService userService, AdvertisementService adService) {
+        this.repo = repo;
+        this.userService = userService;
+        this.adService = adService;
     }
 
-    public void addFavorite(Long userId,Long adId){
-        UserEntity user=userRepo.findById(userId).get();
-        AdEntity ad=adRepo.findById(adId).get();
+    public FavoriteEntity add(String buyerEmail, Long adId) {
+        UserEntity buyer = userService.findByEmail(buyerEmail);
+        AdvertisementEntity ad = adService.getById(adId);
 
-        FavoriteEntity f=new FavoriteEntity();
-        f.setUser(user);
-        f.setAd(ad);
+        if (!Boolean.TRUE.equals(ad.getActive())) {
+            throw new BadRequestException("Deaktiv elani favorit edebilmezsen");
+        }
 
-        favRepo.save(f);
+        if (repo.existsByUserAndAd(buyer, ad)) {
+
+            throw new BadRequestException("Bu elan artiq secilmislerdedir");
+        }
+
+        return repo.save(new FavoriteEntity(buyer, ad));
     }
 
-    public List<FavoriteEntity> myFavorites(Long userId){
-        return favRepo.findByUserId(userId);
+    public void remove(String buyerEmail, Long adId) {
+        UserEntity buyer = userService.findByEmail(buyerEmail);
+        AdvertisementEntity ad = adService.getById(adId);
+
+        FavoriteEntity fav = repo.findByUserAndAd(buyer, ad)
+                .orElseThrow(() -> new ResourceNotFoundException("Seçilmiş tapilmadi"));
+        repo.delete(fav);
     }
 
-    public void deleteFavorite(Long id){
-        favRepo.deleteById(id);
+    public List<FavoriteEntity> list(String buyerEmail) {
+        UserEntity buyer = userService.findByEmail(buyerEmail);
+        return repo.findByUser(buyer);
     }
 }

@@ -1,30 +1,37 @@
 package az.developia.turbo_system_name.Project.entity;
 
+
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="favorites")
+@Table(
+        name="favorites",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","ad_id"})
+)
 public class FavoriteEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional=false)
     private UserEntity user;
 
-    @ManyToOne
-    private AdEntity ad;
+    @ManyToOne(optional=false)
+    private AdvertisementEntity ad;
 
-    public FavoriteEntity(){}
+    public FavoriteEntity() {}
+    public FavoriteEntity(UserEntity user, AdvertisementEntity ad) {
+        this.user = user;
+        this.ad = ad;
+    }
 
-    public Long getId(){ return id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public UserEntity getUser(){ return user; }
+    public UserEntity getUser() { return user; }
+    public void setUser(UserEntity user) { this.user = user; }
 
-    public void setUser(UserEntity user){ this.user = user; }
-
-    public AdEntity getAd(){ return ad; }
-
-    public void setAd(AdEntity ad){ this.ad = ad; }
+    public AdvertisementEntity getAd() { return ad; }
+    public void setAd(AdvertisementEntity ad) { this.ad = ad; }
 }

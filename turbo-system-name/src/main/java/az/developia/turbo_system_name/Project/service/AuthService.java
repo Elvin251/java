@@ -1,32 +1,79 @@
 package az.developia.turbo_system_name.Project.service;
 
-import org.springframework.stereotype.Service;
-import az.developia.turbo_system_name.Project.entity.Role;
+
+import az.developia.turbo_system_name.Project.entity.RoleEntity;
 import az.developia.turbo_system_name.Project.entity.UserEntity;
-import az.developia.turbo_system_name.Project.repository.UserRepository;
-import az.developia.turbo_system_name.Project.requestresponse.RegisterRequest;
-import az.developia.turbo_system_name.Project.requestresponse.LoginRequest;
+import az.developia.turbo_system_name.Project.exception.BadRequestException;
+import az.developia.turbo_system_name.Project.repository.RoleRepository;
+import az.developia.turbo_system_name.Project.request.LoginRequest;
+import az.developia.turbo_system_name.Project.request.RegisterRequest;
+import az.developia.turbo_system_name.Project.response.AuthResponse;
+import az.developia.turbo_system_name.Project.security.JwtService;
+import org.springframework.security.authentication.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
 
-    private final UserRepository repo;
+    private final UserService userService;
+    private final RoleRepository roleRepo;
+    private final PasswordEncoder encoder;
+    private final AuthenticationManager authManager;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository repo){
-        this.repo=repo;
+    public AuthService(UserService userService, RoleRepository roleRepo,
+                       PasswordEncoder encoder, AuthenticationManager authManager,
+                       JwtService jwtService) {
+        this.userService = userService;
+        this.roleRepo = roleRepo;
+        this.encoder = encoder;
+        this.authManager = authManager;
+        this.jwtService = jwtService;
     }
 
-    public void register(RegisterRequest req){
-        UserEntity u=new UserEntity();
-        u.setUsername(req.getUsername());
-        u.setPassword(req.getPassword());
-        u.setRole(Role.USER);
-        repo.save(u);
+    // Tapşırıq: qeydiyyat -> avtomatik BUYER
+    public AuthResponse register(RegisterRequest req) {
+        if (userService.existsByEmail(req.getEmail())) {
+            throw new BadRequestException("Bu email artiq movcuddur");
+        }
+
+        RoleEntity buyer = roleRepo.findByName("ROLE_BUYER")
+                .orElseThrow(() -> new BadRequestException("ROLE_BUYER tapilmadi"));
+
+        UserEntity u = new UserEntity();
+        u.setFullName(req.getFullName());
+        u.setEmail(req.getEmail());
+        u.setPassword(encoder.encode(req.getPassword()));
+        u.getRoles().add(buyer);
+
+        userService.save(u);
+
+        var ud = userService.loadUserByUsername(u.getEmail());
+        String token = jwtService.generateToken(ud);
+
+        return new AuthResponse(
+                token,
+                u.getId(),
+                u.getEmail(),
+                u.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toList())
+        );
     }
 
-    public boolean login(LoginRequest req){
-        UserEntity u=repo.findByUsername(req.getUsername());
-        if(u==null) return false;
-        return u.getPassword().equals(req.getPassword());
+    public AuthResponse login(LoginRequest req) {
+        authManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
+
+        UserEntity u = userService.findByEmail(req.getEmail());
+        var ud = userService.loadUserByUsername(u.getEmail());
+        String token = jwtService.generateToken(ud);
+
+        return new AuthResponse(
+                token,
+                u.getId(),
+                u.getEmail(),
+                u.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toList())
+        );
     }
 }

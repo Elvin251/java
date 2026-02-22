@@ -1,11 +1,13 @@
 package az.developia.turbo_system_name.Project.entity;
 
 
+
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="brands")
-public class BrandEntity {
+@Table(name="roles")
+public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,7 +15,8 @@ public class BrandEntity {
     @Column(unique=true, nullable=false)
     private String name;
 
-    public BrandEntity() {}
+    public RoleEntity() {}
+    public RoleEntity(String name) { this.name = name; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
